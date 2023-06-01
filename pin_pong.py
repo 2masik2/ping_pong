@@ -6,7 +6,7 @@ win_width = 700
 win_height = 500
 window = display.set_mode((win_width, win_height))
 display.set_caption('пинг-понг')
-background = transform.scale(image.load('картинка фона(найти)'), (win_width,win_height))
+background = transform.scale(image.load('фон.webp'), (win_width,win_height))
 
 game = True
 finish = False
@@ -30,45 +30,38 @@ class GameSprite(sprite.Sprite):
 
 #класс ракетки
 class Racket(GameSprite):
-    def update(self):
+    def update_one(self):
         keys_pressed = key.get_pressed()
         if keys_pressed[K_UP] and self.rect.y > 5:
             self.rect.y -= self.speed
-        if keys_pressed[K_DOWN] and self.rect.y < win_height - 80:
+        if keys_pressed[K_DOWN] and self.rect.y < win_height - 100:
             self.rect.y += self.speed 
+
+    def update_two(self):
+        keys_pressed = key.get_pressed()
+        if keys_pressed[K_w] and self.rect.y > 5:
+            self.rect.y -= self.speed
+        if keys_pressed[K_s] and self.rect.y < win_height - 100:
+            self.rect.y += self.speed
 
 #класс мяча
 class Ball(GameSprite):
     def update(self):
         self.rect.y += self.speed
 
-racket = Racket('картинка ракетки(найти)', ...)
+racket = Racket('ракетка.jpg', 20, win_height - 100, 50, 100, 10)
+racket2 = Racket('ракетка.jpg', 630, win_height - 100, 50, 100, 10)
 
-while not finish:
-    ball.fill()
-    racket.fill()
+while game:
+    window.blit(background,(0,0))
+    for e in event.get():
+        if e.type == QUIT:
+            game = False
+    
+    racket.update_one()
+    racket.reset()
+    racket2.update_two()
+    racket2.reset()
 
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            finish = True
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_RIGHT:
-                move_down = True
-        elif event.type == pygame.KEYUP:
-            if event.key == pygame.K_RIGHT:
-                move_down = False
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_LEFT:
-                move_up = True
-        elif event.type == pygame.KEYUP:
-            if event.key == pygame.K_LEFT:
-                move_up = False
-
-    if move_down:
-        platform.rect.y += 3
-
-    if move_up:
-        platform.rect.y -= 3
-
-    ball.rect.x += move_ballx
-    ball.rect.y += move_bally
+    display.update()
+    time.delay(50)
