@@ -64,7 +64,7 @@ class Racket(GameSprite):
 
 racket = Racket('ракетка.jpg', 20, win_height - 100, 50, 100, 10)
 racket2 = Racket('ракетка.jpg', 630, win_height - 100, 50, 100, 10)
-ball = Racket('ракетка.jpg', 100, 100, 40, 40, None)
+ball = Racket('ball_1.png', 100, 100, 40, 40, None)
 
 
 while game:
