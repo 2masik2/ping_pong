@@ -8,10 +8,20 @@ window = display.set_mode((win_width, win_height))
 display.set_caption('пинг-понг')
 background = transform.scale(image.load('фон.webp'), (win_width,win_height))
 
+font.init()
+font1 = font.SysFont('Arial', 80)
+
+lose_l = font1.render('LOSE LEFT!', True, (180, 0, 0))
+lose_r = font1.render('LOSE RIGHT!', True, (180, 0, 0))
+ 
+font2 = font.SysFont('Arial', 36)
+
 game = True
 finish = False
 clock = time.Clock()
 FPS = 60
+move_ballx = 3
+move_bally = 3
 
 #создание классов 
 class GameSprite(sprite.Sprite):
@@ -45,23 +55,54 @@ class Racket(GameSprite):
             self.rect.y += self.speed
 
 #класс мяча
-class Ball(GameSprite):
-    def update(self):
-        self.rect.y += self.speed
+# class Ball(GameSprite):
+#     def update(self):
+#         self.rect.y += self.speed
+#         self.rect.x += self.speed
+
+
 
 racket = Racket('ракетка.jpg', 20, win_height - 100, 50, 100, 10)
 racket2 = Racket('ракетка.jpg', 630, win_height - 100, 50, 100, 10)
+ball = Racket('ракетка.jpg', 100, 100, 40, 40, None)
+
 
 while game:
     window.blit(background,(0,0))
     for e in event.get():
         if e.type == QUIT:
             game = False
-    
-    racket.update_one()
-    racket.reset()
-    racket2.update_two()
-    racket2.reset()
 
-    display.update()
-    time.delay(50)
+    if not finish:
+
+        racket.update_two()
+        racket.reset()
+        racket2.update_one()
+        racket2.reset()
+        ball.reset()
+        
+        ball.rect.x += move_ballx
+        ball.rect.y += move_bally
+
+        # if ball.rect.y < 0:
+        #     move_bally *=-1
+
+        if ball.rect.colliderect(racket.rect) or ball.rect.colliderect(racket2.rect):
+            move_ballx *=-1
+
+        if ball.rect.y > 450 or ball.rect.y < 0:
+            move_bally *=-1
+
+        if ball.rect.x < 10:
+            finish = True
+            window.blit(lose_l, (170, 100))
+
+        if ball.rect.x > 690:
+            finish = True
+            window.blit(lose_r, (170, 100))
+        
+    
+    
+
+        display.update()
+    clock.tick(FPS)
